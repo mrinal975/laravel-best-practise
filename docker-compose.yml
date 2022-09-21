@@ -5,17 +5,17 @@ services:
             context: ./docker
             dockerfile: Dockerfile
         container_name: best_practice_api
-        working_dir: /var/www/best_practice_backend
+        working_dir: /var/www/laravel-best-practice
         depends_on:
             - db
         networks:
             - best_practice
         volumes:
-            - .:/var/www/best_practice_backend
+            - .:/var/www/laravel-best-practice
     webserver:
         image: nginx:1.23
         container_name: best_practice_nginx
-        working_dir: /var/www/best_practice_backend
+        working_dir: /var/www/laravel-best-practice
         depends_on:
             - app
         networks:
@@ -25,7 +25,7 @@ services:
         volumes:
             - ./nginx.conf:/etc/nginx/conf.d/default.conf
             - ./nginx/conf.d/:/etc/nginx/conf.d/
-            - ./:/var/www/contract_backend
+            - ./:/var/www/laravel-best-practice
     db:
         image: mysql:8.0
         container_name: best_practice_mysql
@@ -33,7 +33,7 @@ services:
         networks:
             - best_practice
         volumes:
-            - /home/database/Workspace/Deploy/db_store/best_practice_backend:/var/lib/mysql
+            - /home/database/Workspace/Deploy/db_store/laravel-best-practice:/var/lib/mysql
         environment:
             - MYSQL_DATABASE=${DB_DATABASE}
             - MYSQL_ROOT_PASSWORD=root

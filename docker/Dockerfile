@@ -1,6 +1,6 @@
 FROM php:8.1-fpm
-WORKDIR /var/www/laravel-best-practise
-RUN chown -R www-data:www-data /var/www/laravel-best-practise
+WORKDIR /var/www/laravel-best-practice
+RUN chown -R www-data:www-data /var/www/laravel-best-practice
 RUN apt-get update && apt-get install -y \
     git \
     libzip-dev \
