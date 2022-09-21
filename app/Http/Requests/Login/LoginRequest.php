@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Login;
 
 use Illuminate\Foundation\Http\FormRequest;
+
 // [OAT\Schema(
 //     schema: 'LoginRequest',
 //     required: ['email', 'password'],
@@ -27,21 +28,33 @@ class LoginRequest extends FormRequest
      *
      * @return bool
      */
-    public function authorize(): bool
+    public function authorize()
     {
-        return false;
+        return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, mixed>
-     */
-    public function rules(): array
+
+    public function attributes()
     {
         return [
-            'email' => ['required', 'email'],
-            'password' => ['required', 'string'],
+            'email' => 'user email',
+            'password' => 'user paassword',
+  
+        ];
+    }
+    
+    public function messages()
+    {
+        return [
+            'required' => 'Required :attribute',
+        ];
+    }
+    
+    public function rules()
+    {
+        return [
+            'email' => 'required|max:128',
+            'password' => 'required|max:128',
         ];
     }
 }
