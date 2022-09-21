@@ -12,6 +12,7 @@ class Gender extends BaseModel
     {
         parent::__construct($this);
     }
+    
     public function serializerFields()
     {
         return [

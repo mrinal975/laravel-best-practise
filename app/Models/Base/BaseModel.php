@@ -27,9 +27,11 @@ class BaseModel extends Model
             $this->current_staff = Auth::user()->staff_id;
             $this->auth_user = Auth::user()->id;
             $this->roleFieldValue = $this->current_staff;
-        } catch (Exception $ex) {
+        }catch (Exception $ex) 
+        {
+
         }
-        parent::__construct($model);
+
     }
 
     public function getAll($filter = null, $value = null, $resourcePerPage = 50, $orderBy = 'DESC', $is_role = null, $data_permission = 0, $orderbyField = 'id', $special_query = null)

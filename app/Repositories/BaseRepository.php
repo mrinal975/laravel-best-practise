@@ -17,9 +17,11 @@ class BaseRepository implements BaseInterface
      * @param  Model  $entityInstance
      * @return void
      */
+    private $per_page = 20;
     public function __construct(Model $entityInstance)
     {
         $this->entityInstance = $entityInstance;
+        
     }
 
         /**
