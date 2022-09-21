@@ -2,14 +2,9 @@
 .vscode
 /vendor
 .idea/
-/docker/var
 data/rabbitmq/
 composer.lock
 storage
-docker-compose.yml
-hris.conf
-nginx
-nginx.conf
 /schedule/var
 /queue/var
 docker/.DS_Store
