@@ -9,9 +9,11 @@ use App\Engine\HttpStatus;
 
 class AuthService
 {
+    private $user;
+
     public function __construct(private User $user)
     {
-        //
+        $this->user = $user;
     }
 
     public function loginUser(LoginRequest $request)
