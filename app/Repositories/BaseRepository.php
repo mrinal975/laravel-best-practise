@@ -2,6 +2,8 @@
 
 namespace App\Repositories;
 
+use App\Http\Resources\Base\BaseCollection;
+use App\Http\Resources\Base\BaseResource;
 use Illuminate\Database\Eloquent\Model;
 use App\Interface\BaseInterface;
 use Illuminate\Http\Request;
@@ -12,12 +14,12 @@ class BaseRepository implements BaseInterface
     /**
      * Create a new repository instance.
      *
-     * @param  Admin  $admin
+     * @param  Model  $entityInstance
      * @return void
      */
-    public function __construct(Model $admin)
+    public function __construct(Model $entityInstance)
     {
-        $this->model = $admin;
+        $this->entityInstance = $entityInstance;
     }
 
         /**

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Services\Auth;
+namespace App\Services\Gender;
 
-use App\Repositories\GenderRepository;
+use App\Repositories\GenderRepository\GenderRepository;
 
 class GenderService
 {

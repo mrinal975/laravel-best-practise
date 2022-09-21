@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Repositories\GenderRepository;
 
 use App\Models\Gender\Gender;
+use App\Repositories\BaseRepository;
 
 class GenderRepository extends BaseRepository
 {
@@ -12,8 +13,8 @@ class GenderRepository extends BaseRepository
      * @param  Gender  $gender
      * @return void
      */
-    public function __construct(Gender $gender)
+    public function __construct(Gender $entityInstance)
     {
-        $this->model = $gender;
+        $this->entityInstance = $entityInstance;
     }
 }

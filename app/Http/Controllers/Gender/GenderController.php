@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Gender;
 
 use App\Http\Controllers\Controller;
-use App\Services\Auth\GenderService;
+use App\Services\Gender\GenderService;
 
 class GenderController extends Controller
 {
