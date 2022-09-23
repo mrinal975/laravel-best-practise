@@ -15,7 +15,11 @@ return new class extends Migration
     {
         Schema::create('button_permissions', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->string('role_id');
+            $table->string('page_id'); // description
+            $table->tinyInteger('status')->default(0);
+            $table->bigInteger('organization_id')->nullable();
+            Fields::AddCommonFieldWithoutforeign($table);
         });
     }
 
