@@ -97,11 +97,39 @@ class RolePermissionController extends BaseController
         if ($request->user_id) {
             $user_id = $request->user_id;
             $role_id = $this->getEmployeeRoleId($user_id);
-            $data = (new PermissionManager())->getMenuTree($role_id);
+            $data = $this->getMenuTree($role_id);
             return response()->json(['data' => $data, HttpStatus::STATUS => HttpStatus::OK], HttpStatus::OK);
         } else {
             return ['message' => 'No page is defined for this user'];
         }
+    }
+
+    public function getMenuTree($arrayForPages, $parent = 0)
+    {
+        $menuTree = [];
+        foreach ($arrayForPages[$parent] as $page) {
+            $newMenu = new stdClass();
+            $newMenu->id = $page['id'];
+            $newMenu->title = $page['name'];
+            $newMenu->translate = $page['translate'];
+            $newMenu->type = $page['type'];
+            $newMenu->icon = $page['icon'];
+            $newMenu->url = $page['link'];
+            $newMenu->badge = $page['badge'];
+
+            // check if there are children for this item
+            if (isset($arrayForPages[$page['id']])) {
+                // and here we use this nested function recursively
+                $newMenu->children = $this->getMenuTree(
+                    $arrayForPages,
+                    $page['id']
+                );
+            }
+
+            $menuTree[] = $newMenu;
+        }
+
+        return $menuTree;
     }
 
     public function showPages(Request $request)
