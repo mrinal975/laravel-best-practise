@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Engine\DbFields\Fields;
 
 return new class extends Migration
 {
@@ -22,7 +23,7 @@ return new class extends Migration
             $table->tinyInteger('role_id')->nullable();
             $table->tinyInteger('status')->default(1);
             $table->rememberToken();
-            $table->timestamps();
+            Fields::AddCommonFieldWithoutforeign($table);
         });
     }
 

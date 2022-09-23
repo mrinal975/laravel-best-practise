@@ -40,4 +40,3 @@ class RoleAssign extends BaseModel
         return['id', 'name'];
     }
 }
-}

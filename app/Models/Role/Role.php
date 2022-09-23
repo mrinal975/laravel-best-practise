@@ -3,8 +3,8 @@
 namespace App\Models\Role;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Models\Base\BaseModel;
 use App\Manager\PermissionManager\PermissionManager;
+use App\Models\Base\BaseModel;
 
 class Role extends BaseModel
 {
