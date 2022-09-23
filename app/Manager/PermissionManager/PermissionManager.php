@@ -8,13 +8,11 @@ use App\Models\RolePermission\RolePermission;
 
 class PermissionManager
 {
-    public function getPageMenuTree($role_id=null)
+    public function getMenuTree($arrayForPages, $parent = 0)
     {
         $menuTree = [];
-        $pages = Page::where('parent_id', 0)->get()->toArray();
-
-        foreach ($pages as $page) {
-            $newMenu = new \stdClass();
+        foreach ($arrayForPages[$parent] as $page) {
+            $newMenu = new stdClass();
             $newMenu->id = $page['id'];
             $newMenu->title = $page['name'];
             $newMenu->translate = $page['translate'];
@@ -22,26 +20,19 @@ class PermissionManager
             $newMenu->icon = $page['icon'];
             $newMenu->url = $page['link'];
             $newMenu->badge = $page['badge'];
-            $newMenu->has_access = $this->hasPageAccess($page['id'], $role_id);
-            $newMenu->button_permission = $this->getButtonPermission($page['id'], $role_id);
-            $subMenus = Page::where('parent_id', $page['id'])->get()->toArray();
-            $childMenu = [];
-            foreach ($subMenus as $subMenu) {
-                $subMenuobj = new \stdClass();
-                $subMenuobj->id = $subMenu['id'];
-                $subMenuobj->title = $subMenu['name'];
-                $subMenuobj->translate = $subMenu['translate'];
-                $subMenuobj->type = $subMenu['type'];
-                $subMenuobj->icon = $subMenu['icon'];
-                $subMenuobj->url = $subMenu['link'];
-                $subMenuobj->badge = $subMenu['badge'];
-                $subMenuobj->has_access = $this->hasPageAccess($subMenu['id'], $role_id);
-                $subMenuobj->button_permission = $this->getButtonPermission($subMenu['id'], $role_id);
-                $childMenu[] = $subMenuobj;
+
+            // check if there are children for this item
+            if (isset($arrayForPages[$page['id']])) {
+                // and here we use this nested function recursively
+                $newMenu->children = $this->getMenuTree(
+                    $arrayForPages,
+                    $page['id']
+                );
             }
-            $newMenu->children = $childMenu;
+
             $menuTree[] = $newMenu;
         }
+
         return $menuTree;
     }
 
@@ -54,41 +45,6 @@ class PermissionManager
     public function getButtonPermission($pageId, $roleId)
     {
         return ButtonPermission::where('page_id', $pageId)->where('role_id', $roleId)->select('id', 'status')->get();
-    }
-
-
-    public function getMenuTree($roleId)
-    {
-        $menuTree = [];
-        $parentPages = $this->getPages($roleId, 0);
-        foreach ($parentPages as $parentPages) {
-            $newMenu = new \stdClass();
-            $newMenu->id = $parentPages['id'];
-            $newMenu->title = $parentPages['name'];
-            $newMenu->translate = $parentPages['translate'];
-            $newMenu->type = $parentPages['type'];
-            $newMenu->icon = $parentPages['icon'];
-            $newMenu->url = $parentPages['link'];
-            $newMenu->badge = $parentPages['badge'];
-            $subMenus = $this->getPages($roleId, $parentPages['id']);
-            $childMenu = [];
-            foreach ($subMenus as $subMenu) {
-                $subMenuobj = new \stdClass();
-                $subMenuobj->id = $subMenu['id'];
-                $subMenuobj->title = $subMenu['name'];
-                $subMenuobj->translate = $subMenu['translate'];
-                $subMenuobj->type = $subMenu['type'];
-                $subMenuobj->icon = $subMenu['icon'];
-                $subMenuobj->url = $subMenu['link'];
-                $subMenuobj->badge = $subMenu['badge'];
-                $childMenu[] = $subMenuobj;
-            }
-            if (count($childMenu)>0) {
-                $newMenu->children = $childMenu;
-            }
-            $menuTree[] = $newMenu;
-        }
-        return $menuTree;
     }
 
     public function getPages($roleId, $parent)
