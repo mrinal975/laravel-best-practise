@@ -11,7 +11,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Models\Role\Role;
+use App\Models\Page\Page;
 use App\Models\User;
+use stdClass;
 
 class RolePermissionController extends BaseController
 {
@@ -97,11 +99,53 @@ class RolePermissionController extends BaseController
         if ($request->user_id) {
             $user_id = $request->user_id;
             $role_id = $this->getEmployeeRoleId($user_id);
-            $data = $this->getMenuTree($role_id);
+            $workablePageIds = $this->hasPageIds($role_id);
+            $allPage = Page::orderBy('order', 'asc')
+                    ->whereIn('id', $workablePageIds)
+                    ->get();
+
+            foreach ($allPage as $page) {
+                $arrayForPages[$page->parent_id][] = $page;
+            }
+
+            $data = $this->getMenuTree($arrayForPages);
+
             return response()->json(['data' => $data, HttpStatus::STATUS => HttpStatus::OK], HttpStatus::OK);
         } else {
             return ['message' => 'No page is defined for this user'];
         }
+    }
+    public function hasPageIds($roleId)
+    {
+        $pages = RolePermission::select('page_id')
+            ->where('role_id', $roleId)
+            ->where('is_checked', 1)
+            ->orderBy('page_id')
+            ->whereNull('deleted_at')
+            ->get();
+
+        $parentArray = [];
+
+        foreach ($pages as $page) {
+            $tempPageId = $page->page_id ?? 0;
+
+            while ($tempPageId > 0) {
+                $checkParent = Page::orderBy('order', 'asc')
+                            ->where('id', $tempPageId)
+                            ->first();
+
+                if ($checkParent->id ?? null) {
+                    array_push($parentArray, $checkParent->id);
+                }
+
+                $tempPageId = $checkParent->parent_id ?? 0;
+            }
+        }
+
+        $pagesWithParent = array_unique($parentArray);
+        sort($pagesWithParent);
+
+        return $pagesWithParent;
     }
 
     public function getMenuTree($arrayForPages, $parent = 0)
