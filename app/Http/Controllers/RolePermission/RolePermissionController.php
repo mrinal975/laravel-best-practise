@@ -99,15 +99,7 @@ class RolePermissionController extends BaseController
         if ($request->user_id) {
             $user_id = $request->user_id;
             $role_id = $this->getEmployeeRoleId($user_id);
-            $workablePageIds = $this->hasPageIds($role_id);
-            $allPage = Page::orderBy('order', 'asc')
-                    ->whereIn('id', $workablePageIds)
-                    ->get();
-
-            foreach ($allPage as $page) {
-                $arrayForPages[$page->parent_id][] = $page;
-            }
-
+            $arrayForPages = $this->getPermittedPageList($role_id);
             $data = $this->getMenuTree($arrayForPages);
 
             return response()->json(['data' => $data, HttpStatus::STATUS => HttpStatus::OK], HttpStatus::OK);
@@ -115,6 +107,20 @@ class RolePermissionController extends BaseController
             return ['message' => 'No page is defined for this user'];
         }
     }
+
+    public function getPermittedPageList($role_id){
+        $arrayForPages = [];
+        $workablePageIds = $this->hasPageIds($role_id);
+        $allPage = Page::orderBy('order', 'asc')
+                ->whereIn('id', $workablePageIds)
+                ->get();
+
+        foreach ($allPage as $page) {
+            $arrayForPages[$page->parent_id][] = $page;
+        }
+        return $arrayForPages;
+    }
+
     public function hasPageIds($roleId)
     {
         $pages = RolePermission::select('page_id')
@@ -178,7 +184,8 @@ class RolePermissionController extends BaseController
 
     public function showPages(Request $request)
     {
-        $data = (new PermissionManager())->getPageMenuTree($request->role_id);
+        $pageList = $this->getPermittedPageList($request->role_id);
+        $data = $this->getMenuTree($pageList);
         return response()->json(['data' => $data, HttpStatus::STATUS => HttpStatus::OK], HttpStatus::OK);
     }
 
@@ -208,6 +215,5 @@ class RolePermissionController extends BaseController
         }
         $data = (new PermissionManager())->getPageButtonPermission($request->role_id, $request->link);
         return response()->json(['data' => $data, HttpStatus::STATUS => HttpStatus::OK], HttpStatus::OK);
-        (new PermissionManager())->getPageMenuTree($request->role_id);
     }
 }
